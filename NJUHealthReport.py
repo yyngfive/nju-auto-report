@@ -2,12 +2,15 @@ import requests
 from bs4 import BeautifulSoup
 import execjs
 import json
-import time
 import os
+from datetime import datetime, timezone, timedelta
+  
+tz = timezone(timedelta(hours=+8))
 
 auth_url = 'https://authserver.nju.edu.cn/authserver/login'
 service_url = 'http://ehallapp.nju.edu.cn/xgfw/sys/yqfxmrjkdkappnju/apply/getApplyInfoList.do'
 url = auth_url+'?service='+service_url
+
 encrypt_url = 'https://authserver.nju.edu.cn/authserver/custom/js/encrypt.js'
 submit_url = 'http://ehallapp.nju.edu.cn/xgfw/sys/yqfxmrjkdkappnju/apply/saveApplyInfos.do'
 
@@ -80,8 +83,9 @@ def report(service_url,submit_url,mod_auth_cas,location):
     info = json.loads(res.text)
     if info['msg'] != '成功':
         raise Exception('Submission FAILED')
+
 if __name__ == '__main__':
-    print(username)
+
     try:
         ticket = getTicket(url,encrypt_url,username,password)
     except:
@@ -94,4 +98,7 @@ if __name__ == '__main__':
         report(service_url,submit_url,mod_auth_cas,location)
     except:
         raise Exception('Report FAILED!')
-    print(time.asctime(time.localtime())+':Report your health information successfully!' )
+
+    fmt = '%Y-%m-%d %H:%M:%S %z'
+    zoned_time = datetime.today().astimezone(tz)
+    print(zoned_time.strftime(fmt)+':Report your health information successfully!！' )
