@@ -1,7 +1,8 @@
 name: Auto Report
 on:
+  push:
   schedule:
-    - cron: '5 13 * * *'
+    - cron: '30 6 * * *'
   
 jobs:
   log-in-and-report:
