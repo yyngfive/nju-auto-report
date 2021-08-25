@@ -81,6 +81,7 @@ def report(service_url,submit_url,mod_auth_cas,location):
     if info['msg'] != '成功':
         raise Exception('Submission FAILED')
 if __name__ == '__main__':
+    print(username)
     try:
         ticket = getTicket(url,encrypt_url,username,password)
     except:
