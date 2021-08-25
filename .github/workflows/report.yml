@@ -23,6 +23,7 @@ jobs:
           USERNAME: ${{secrets.USERNAME}}
           PASSWORD: ${{secrets.PASSWORD}}
           LOCATION: ${{secrets.LOCATION}}
+          MAIL    : ${{secrets.MAIL}}
         run: python NJUHealthReport.py
 
 

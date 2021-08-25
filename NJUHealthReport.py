@@ -14,9 +14,12 @@ url = auth_url+'?service='+service_url
 encrypt_url = 'https://authserver.nju.edu.cn/authserver/custom/js/encrypt.js'
 submit_url = 'http://ehallapp.nju.edu.cn/xgfw/sys/yqfxmrjkdkappnju/apply/saveApplyInfos.do'
 
+mail_bot_url = 'https://mail.stassenger.top/api'
+
 username = os.environ['USERNAME']
 password = os.environ['PASSWORD']
 location = os.environ['LOCATION']
+mail     = os.environ['MAIL']
 
 headers = {
         'User=Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36'
@@ -84,21 +87,34 @@ def report(service_url,submit_url,mod_auth_cas,location):
     if info['msg'] != '成功':
         raise Exception('Submission FAILED')
 
+# 使用了我在Vercel上部署的邮件服务，可能不稳定
+def sendMail(url,address,code):
+    payload={
+        'receiver':address,
+        'code':code
+    }
+    res = requests.get(url,headers=headers,params=payload)
+    print(res.text)
+
 if __name__ == '__main__':
 
     try:
         ticket = getTicket(url,encrypt_url,username,password)
     except:
+        sendMail(mail_bot_url,mail,'0')
         raise Exception('Login FAILED!') 
     try:
         mod_auth_cas = getModAuthCas(ticket[0])
     except:
+        sendMail(mail_bot_url,mail,'0')
         raise Exception('Authorization FAILED!')
     try:
         report(service_url,submit_url,mod_auth_cas,location)
     except:
+        sendMail(mail_bot_url,mail,'0')
         raise Exception('Report FAILED!')
 
     fmt = '%Y-%m-%d %H:%M:%S %z'
     zoned_time = datetime.today().astimezone(tz)
     print(zoned_time.strftime(fmt)+':Report your health information successfully!！' )
+    sendMail(mail_bot_url,mail,'1')
