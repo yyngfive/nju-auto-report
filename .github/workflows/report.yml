@@ -1,0 +1,27 @@
+name: Auto Report
+on:
+  schedule:
+    - cron: '5 13 * * *'
+  
+jobs:
+  log-in-and-report:
+
+    name: log in and report
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+      - run: pip install -r requirements.txt
+      - env:
+          USERNAME: ${{secrets.USERNAME}}
+          PASSWORD: ${{secrets.PASSWORD}}
+          LOCATION: ${{secrets.LOCATION}}
+        run: python NJUHealthReport.py
+
+
