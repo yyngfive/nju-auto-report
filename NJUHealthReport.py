@@ -98,11 +98,15 @@ def sendMail(url,address,code):
 
 if __name__ == '__main__':
 
-    try:
-        ticket = getTicket(url,encrypt_url,username,password)
-    except:
-        sendMail(mail_bot_url,mail,'0')
-        raise Exception('Login FAILED!') 
+    for _ in range(3):
+        try:
+            ticket = getTicket(url,encrypt_url,username,password)
+        except:
+            if _ != 2:
+                continue
+            else:
+                sendMail(mail_bot_url,mail,'0')
+                raise Exception('Login FAILED!') 
     try:
         mod_auth_cas = getModAuthCas(ticket[0])
     except:
