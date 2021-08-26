@@ -103,6 +103,7 @@ if __name__ == '__main__':
             ticket = getTicket(url,encrypt_url,username,password)
         except:
             if _ != 2:
+                print('Again.')
                 continue
             else:
                 sendMail(mail_bot_url,mail,'0')
