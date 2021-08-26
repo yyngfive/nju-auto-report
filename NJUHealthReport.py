@@ -14,7 +14,7 @@ url = auth_url+'?service='+service_url
 encrypt_url = 'https://authserver.nju.edu.cn/authserver/custom/js/encrypt.js'
 submit_url = 'http://ehallapp.nju.edu.cn/xgfw/sys/yqfxmrjkdkappnju/apply/saveApplyInfos.do'
 
-mail_bot_url = 'https://mail.stassenger.top/api'
+mail_bot_url = 'https://api.stassenger.top/api/mail'
 
 username = os.environ['USERNAME']
 password = os.environ['PASSWORD']
