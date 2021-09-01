@@ -4,6 +4,7 @@ import execjs
 import json
 import os
 from datetime import datetime, timezone, timedelta
+import time
   
 tz = timezone(timedelta(hours=+8))
 
@@ -94,7 +95,7 @@ def sendMail(url,address,code):
         'code':code
     }
     res = requests.get(url,headers=headers,params=payload)
-    print(res.text)
+    return res.text
 
 if __name__ == '__main__':
 
@@ -106,6 +107,7 @@ if __name__ == '__main__':
                 print('Again.')
                 continue
             else:
+                time.sleep(10)
                 sendMail(mail_bot_url,mail,'0')
                 raise Exception('Login FAILED!') 
     try:
