@@ -107,7 +107,7 @@ if __name__ == '__main__':
                 print('Again.')
                 continue
             else:
-                time.sleep(10)
+                time.sleep(60)
                 sendMail(mail_bot_url,mail,'0')
                 raise Exception('Login FAILED!') 
     try:
