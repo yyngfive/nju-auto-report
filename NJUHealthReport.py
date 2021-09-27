@@ -1,10 +1,11 @@
 import requests
+from requests.adapters import HTTPAdapter
 from bs4 import BeautifulSoup
 import json
 import os
 from datetime import datetime, timezone, timedelta
 import AES
-  
+
 tz = timezone(timedelta(hours=+8))
 
 auth_url = 'https://authserver.nju.edu.cn/authserver/login'
@@ -26,6 +27,8 @@ headers = {
 
 def getTicket(url,username,password):
     session = requests.Session()
+    #session.mount('http://', HTTPAdapter(max_retries=3))
+    session.mount('https://', HTTPAdapter(max_retries=3))
     res = session.get(url,headers=headers)
     soup = BeautifulSoup(res.text,'lxml').find('form',id='casLoginForm')
     lt = soup.find('input',{'name':'lt'})['value']
@@ -86,20 +89,16 @@ def sendMail(url,address,code):
         'code':code
     }
     res = requests.get(url,headers=headers,params=payload)
-    print(res.text)
+    return res.text
 
 if __name__ == '__main__':
 
-    for _ in range(3):
-        try:
-            ticket = getTicket(url,username,password)
-        except:
-            if _ != 2:
-                print('Again.')
-                continue
-            else:
-                sendMail(mail_bot_url,mail,'0')
-                raise Exception('Login FAILED!') 
+    
+    try:
+        ticket = getTicket(url,username,password)
+    except:
+        sendMail(mail_bot_url,mail,'0')
+        raise Exception('Login FAILED!') 
     try:
         mod_auth_cas = getModAuthCas(ticket[0])
     except:
