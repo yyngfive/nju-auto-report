@@ -1,4 +1,4 @@
 requests
-pyexecjs
-lxml
 beautifulsoup4
+pycryptodome
+lxml

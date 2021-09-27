@@ -1,9 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
-import execjs
 import json
 import os
 from datetime import datetime, timezone, timedelta
+import AES
   
 tz = timezone(timedelta(hours=+8))
 
@@ -11,7 +11,6 @@ auth_url = 'https://authserver.nju.edu.cn/authserver/login'
 service_url = 'http://ehallapp.nju.edu.cn/xgfw/sys/yqfxmrjkdkappnju/apply/getApplyInfoList.do'
 url = auth_url+'?service='+service_url
 
-encrypt_url = 'https://authserver.nju.edu.cn/authserver/custom/js/encrypt.js'
 submit_url = 'http://ehallapp.nju.edu.cn/xgfw/sys/yqfxmrjkdkappnju/apply/saveApplyInfos.do'
 
 mail_bot_url = 'https://api.stassenger.top/api/mail'
@@ -25,14 +24,7 @@ headers = {
         'User=Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36'
     }
 
-def _etd2(encrypt_url,password,pwdDefaultEncryptSalt):
-    res = requests.get(encrypt_url)
-    res.encoding = 'utf-8'
-    js = res.text
-    ctx = execjs.compile(js)
-    return ctx.call('encryptAES',password,pwdDefaultEncryptSalt)
-
-def getTicket(url,encrypt_url,username,password):
+def getTicket(url,username,password):
     session = requests.Session()
     res = session.get(url,headers=headers)
     soup = BeautifulSoup(res.text,'lxml').find('form',id='casLoginForm')
@@ -42,7 +34,7 @@ def getTicket(url,encrypt_url,username,password):
     _eventId = 'submit'
     rmShown = '1'
     pwdDefaultEncryptSalt = soup.find('input',{'id':'pwdDefaultEncryptSalt'})['value']
-    password = _etd2(encrypt_url,password,pwdDefaultEncryptSalt)
+    password = AES.AESEncrypt(password,pwdDefaultEncryptSalt)
     payload = {'username':username,
                'password':password,
                'lt':lt,
@@ -100,7 +92,7 @@ if __name__ == '__main__':
 
     for _ in range(3):
         try:
-            ticket = getTicket(url,encrypt_url,username,password)
+            ticket = getTicket(url,username,password)
         except:
             if _ != 2:
                 print('Again.')
